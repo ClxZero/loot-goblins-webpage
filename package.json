@@ -7,7 +7,14 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:lgw": "node dist/loot-goblins-webpage/server/server.mjs"
+    "serve:ssr:lgw": "node dist/loot-goblins-webpage/server/server.mjs",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm.cmd run compile",
+    "pretest": "npm.cmd run compile",
+    "posttest": "npm.cmd run lint"
   },
   "private": true,
   "dependencies": {
@@ -22,6 +29,7 @@
     "@angular/router": "^17.0.0",
     "@angular/ssr": "^17.0.10",
     "express": "^4.18.2",
+    "gts": "^5.3.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"
@@ -42,6 +50,7 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.4.39",
     "tailwindcss": "^3.4.6",
-    "typescript": "~5.2.2"
+    "typescript": "~5.2.2",
+    "gts": "^5.3.1"
   }
 }
