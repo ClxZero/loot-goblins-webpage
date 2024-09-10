@@ -1,3 +1,11 @@
+:host {
+    display: block;
+    height: 100vh; // delete this one
+    background: url("../assets/imgs/background_easy.jpg");
+    background-position: center;
+    background-size: cover;
+}
+
 #main-container {
     max-width: 700px;
     margin: auto;

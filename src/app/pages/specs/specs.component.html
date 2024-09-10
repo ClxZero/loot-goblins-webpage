@@ -1,1 +1,22 @@
 <p>Specializations table</p>
+
+<div *ngIf="data">
+    <table border="1">
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Name</th>
+          <th>Players</th>
+          <th>extra</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let spec of data">
+          <td>{{ spec.spec_type }}</td>
+          <td>{{ spec.spec_name }}</td>
+          <td>{{ spec.players }}</td>
+          <td>{{ spec.extra_info }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
