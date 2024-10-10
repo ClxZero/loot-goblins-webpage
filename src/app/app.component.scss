@@ -1,16 +1,16 @@
 :host {
     display: block;
-    height: 100vh;
-    position: relative; // Add this
-    background: url("../assets/imgs/fondo-completo.webp");
-    background-position: center;
-    background-size: cover;
+    min-height: 100vh;
+    position: relative;
 }
 
-#main-container {
-    margin: auto;
-    position: relative; // Add this
-    z-index: 1; // Add this
+.main-container {
+    min-height: 100vh;
+    background: url("../assets/imgs/fondo-completo.webp") no-repeat center top;
+    background-size: cover;
+    position: relative;
+    z-index: 1;
+    overflow-y: auto;
 }
 
 #particle-canvas {
@@ -19,5 +19,5 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 0; // Change this from -1 to 0
+    z-index: 0;
 }

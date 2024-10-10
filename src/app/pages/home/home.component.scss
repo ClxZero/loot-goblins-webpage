@@ -1,13 +1,338 @@
-// #hero-section {
-//     position: relative;
+@import '../../../variables';
+@import '../../../glitch_btn';
 
-//     #title {
-//         position: absolute;
-//         inset: 0;
-//         margin: auto;
-//     }
-// }
+.home-container {
+  min-height: 100vh;
+  color: $text-color;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow-x: hidden;
+}
 
-#main-img {
+.text-margin {
+  margin-bottom: 2rem;
+}
+
+.static-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/imgs/border-bg.webp');
+  background-size: 150%;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -1;
+  pointer-events: none;
+  mix-blend-mode: color-burn;
+}
+
+#hero-section {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 4rem;
+  background-color: transparent;
+
+  #title {
+    font-size: 5rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
+    position: relative;
+    z-index: 2;
+  }
+
+  .image-container {
+    position: relative;
     width: 100%;
+    height: 40vh; // Adjust this value to control the space below the title
+    overflow: hidden;
+
+    #main-img {
+      max-width: 70%;
+      max-height: 100%;
+      object-fit: contain;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1;
+    }
+  }
+}
+
+.glitch-title {
+  @include glitch-btn;
+  font-size: 5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: inline-block;
+  font-weight: 700; // Increased weight
+
+  &::before,
+  &::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  &::before {
+    left: 2px;
+    text-shadow: -2px 0 #ff00c1;
+    animation: glitch-anim-1 2s infinite linear alternate-reverse;
+  }
+
+  &::after {
+    left: -2px;
+    text-shadow: -2px 0 #00fff9;
+    animation: glitch-anim-2 3s infinite linear alternate-reverse;
+  }
+}
+
+@keyframes glitch-anim-1 {
+  0% {
+    clip: rect(0, 0, 0, 0);
+  }
+  1%,
+  2% {
+    clip: rect(24px, 550px, 90px, 0);
+  }
+  3%,
+  100% {
+    clip: rect(0, 0, 0, 0);
+  }
+}
+
+@keyframes glitch-anim-2 {
+  0% {
+    clip: rect(0, 0, 0, 0);
+  }
+  1%,
+  2% {
+    clip: rect(85px, 550px, 140px, 0);
+  }
+  3%,
+  100% {
+    clip: rect(0, 0, 0, 0);
+  }
+}
+
+section {
+  margin-bottom: 4rem;
+  padding: 2rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
+  max-width: 800px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+
+  h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+  }
+
+  &:nth-child(odd) {
+    margin-left: auto;
+  }
+
+  &:nth-child(even) {
+    margin-right: auto;
+  }
+}
+
+.glitch-btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: $active-color;
+  color: $text-color;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: lighten($active-color, 10%);
+  }
+}
+
+@media (max-width: 768px) {
+  #hero-section {
+    #title {
+      font-size: 3.5rem;
+    }
+  }
+
+  section {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .static-overlay {
+    background-size: cover;
+  }
+}
+
+.glitch-text {
+  position: relative;
+  font-size: 1.2em;
+  color: $text-color;
+  transition: all 400ms ease-in-out;
+  cursor: pointer;
+
+  &::before,
+  &::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  &::before {
+    left: 2px;
+    text-shadow: -1px 0 #ff00c1;
+    animation: glitch-text-anim-1 10s infinite linear alternate-reverse;
+  }
+
+  &::after {
+    left: -2px;
+    text-shadow: -1px 0 #00fff9;
+    animation: glitch-text-anim-2 12s infinite linear alternate-reverse;
+  }
+
+  &:hover {
+    color: #e100ff;
+    text-shadow:
+      0 0 3px #e100ff,
+      0 0 6px #e100ff;
+
+    &::before {
+      animation: glitch-text-anim-1 2s infinite linear alternate-reverse;
+    }
+
+    &::after {
+      animation: glitch-text-anim-2 2.5s infinite linear alternate-reverse;
+    }
+  }
+}
+
+@keyframes glitch-text-anim-1 {
+  0%,
+  91%,
+  100% {
+    clip: rect(0, 0, 0, 0);
+  }
+  92% {
+    clip: rect(0, 100px, 10px, 0);
+  }
+  93% {
+    clip: rect(0, 60px, 20px, 0);
+  }
+  94% {
+    clip: rect(0, 80px, 5px, 0);
+  }
+  95% {
+    clip: rect(0, 45px, 15px, 0);
+  }
+  96% {
+    clip: rect(0, 90px, 25px, 0);
+  }
+}
+
+@keyframes glitch-text-anim-2 {
+  0%,
+  91%,
+  100% {
+    clip: rect(0, 0, 0, 0);
+  }
+  92% {
+    clip: rect(0, 90px, 15px, 0);
+  }
+  93% {
+    clip: rect(0, 50px, 25px, 0);
+  }
+  94% {
+    clip: rect(0, 75px, 10px, 0);
+  }
+  95% {
+    clip: rect(0, 40px, 20px, 0);
+  }
+  96% {
+    clip: rect(0, 80px, 5px, 0);
+  }
+}
+
+// Modify the blue shine animation
+@keyframes blue-shine {
+  0%,
+  90%,
+  100% {
+    text-shadow: none;
+  }
+  91%,
+  99% {
+    text-shadow:
+      0 0 2px #00fff9,
+      0 0 4px #00fff9;
+  }
+}
+
+// Apply the blue shine animation to all glitch-text elements
+.glitch-text {
+  animation: blue-shine 15s infinite;
+  animation-delay: calc(var(--shine-delay) * 1s);
+}
+
+@media (max-width: 870px) and (min-width: 751px) {
+  #hero-section {
+    #title {
+      font-size: 4rem; // Slightly reduce font size
+    }
+
+    .image-container {
+      height: 35vh; // Adjust for medium screens
+
+      #main-img {
+        max-width: 60%;
+      }
+    }
+  }
+}
+
+@media (max-width: 750px) {
+  #hero-section {
+    #title {
+      font-size: 3rem;
+    }
+
+    .image-container {
+      height: 30vh; // Adjust for smaller screens
+
+      #main-img {
+        max-width: 80%;
+      }
+    }
+  }
 }

@@ -1,8 +1,8 @@
 import {Component, OnInit, OnDestroy, ElementRef, Inject, PLATFORM_ID} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {RouterOutlet} from '@angular/router';
+import {CommonModule, isPlatformBrowser} from '@angular/common';
+import {RouterOutlet, Router, NavigationEnd, Event} from '@angular/router';
 import {ParticleService} from './services/particle.service';
-import {isPlatformBrowser} from '@angular/common';
+import {filter} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
@@ -12,18 +12,30 @@ import {isPlatformBrowser} from '@angular/common';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
+  showParticles = false;
+
   constructor(
     private particleService: ParticleService, 
     private el: ElementRef,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private router: Router
   ) {}
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      const canvas = this.el.nativeElement.querySelector('#particle-canvas') as HTMLCanvasElement;
-      if (canvas) {
-        this.particleService.init(canvas);
-      }
+      this.router.events.pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd)
+      ).subscribe((event: NavigationEnd) => {
+        this.showParticles = event.urlAfterRedirects === '/specs';
+        if (this.showParticles) {
+          const canvas = this.el.nativeElement.querySelector('#particle-canvas') as HTMLCanvasElement;
+          if (canvas) {
+            this.particleService.init(canvas);
+          }
+        } else {
+          this.particleService.destroy();
+        }
+      });
     }
   }
 

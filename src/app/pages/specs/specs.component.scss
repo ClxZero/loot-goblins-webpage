@@ -50,8 +50,15 @@
 
   select {
     border-left: none;
-    &:last-child {
-      border-radius: 0 4px 4px 0;
+    color: $text-color; // Use the text color from variables
+
+    option {
+      background-color: rgba(0, 0, 0, 0.9); // Even darker background for options
+      color: $text-color; // Use the text color from variables
+    }
+
+    &:hover, &:focus {
+      background-color: rgba(0, 0, 0, 0.8); // Slightly lighter on hover/focus
     }
   }
 }
