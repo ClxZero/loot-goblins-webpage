@@ -1,16 +1,16 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "dist/loot-goblins-webpage/server.js",
-        "use": "@vercel/node"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "/api"
-      }
-    ]
+  "version": 2,
+  "public": true,
+  "name": "loot-goblins-webpage",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/api"
+    }
+  ],
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "dist/loot-goblins-webpage/**"
+    }
   }
-  
+}
