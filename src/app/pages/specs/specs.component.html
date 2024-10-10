@@ -1,22 +1,95 @@
-<p>Specializations table</p>
+<div class="specs-container">
+  <h2 class="cyberpunk-title" data-text="Specializations Table">Specializations Table</h2>
 
-<div *ngIf="data">
-    <table border="1">
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th>Name</th>
-          <th>Players</th>
-          <th>extra</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let spec of data">
-          <td>{{ spec.spec_type }}</td>
-          <td>{{ spec.spec_name }}</td>
-          <td>{{ spec.players }}</td>
-          <td>{{ spec.extra_info }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="search-and-table-container">
+    <div class="search-bar">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="onSearch($event)"
+        placeholder="Search..."
+      />
+      <select [(ngModel)]="searchColumn" (change)="filterData()">
+        @for (column of selectedData?.columns; track column.key) {
+          <option [value]="column.key">{{ column.title }}</option>
+        }
+      </select>
+      <select [(ngModel)]="categoryFilter" (change)="onCategoryFilterChange()">
+        @for (category of categories; track category) {
+          <option [value]="category">{{ category | titlecase }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="config-buttons">
+      <button
+        (click)="changeParameters('assignedSpecializations')"
+        [class.active]="currentConfig === 'assignedSpecializations'"
+        data-text="Assigned Specializations"
+      >
+        Assigned Specializations
+      </button>
+      <button
+        (click)="changeParameters('unassignedSpecializations')"
+        [class.active]="currentConfig === 'unassignedSpecializations'"
+        data-text="Unassigned Specializations"
+      >
+        Unassigned Specializations
+      </button>
+      <button
+        (click)="changeParameters('allSpecializations')"
+        [class.active]="currentConfig === 'allSpecializations'"
+        data-text="All Specializations"
+      >
+        All Specializations
+      </button>
+      <button
+        (click)="changeParameters('userIdentities')"
+        [class.active]="currentConfig === 'userIdentities'"
+        data-text="By User Identities"
+      >
+        By User Identities
+      </button>
+      <button
+        (click)="changeParameters('conciseAssignedSpecializations')"
+        [class.active]="currentConfig === 'conciseAssignedSpecializations'"
+        data-text="Quick View"
+      >
+        Quick View
+      </button>
+    </div>
+
+    @if (selectedData) {
+      <p class="table-description">
+        @switch (currentConfig) {
+          @case ('assignedSpecializations') {
+            Showing all players and their assigned specializations.
+          }
+          @case ('conciseAssignedSpecializations') {
+            Displaying a concise view of assigned specializations.
+          }
+          @case ('unassignedSpecializations') {
+            Displaying specializations that are not currently assigned to any player.
+          }
+          @case ('allSpecializations') {
+            Showing all specializations, regardless of assignment status.
+          }
+          @case ('userIdentities') {
+            Showing users, their dominant identity, and assigned specializations.
+          }
+        }
+      </p>
+      <div class="table-container">
+        <ng-container
+          *ngComponentOutlet="
+            loadDynamicTable();
+            inputs: {tableData: selectedData, animate: animateTable}
+          "
+        >
+        </ng-container>
+      </div>
+    } @else {
+      <p>Loading data...</p>
+    }
   </div>
+</div>

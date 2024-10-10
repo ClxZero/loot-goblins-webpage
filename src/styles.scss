@@ -1,4 +1,40 @@
 /* You can add global styles to this file, and also import other style files */
+@import 'variables';
+@import 'glitch_btn';
+@import url('https://fonts.googleapis.com/css?family=Barlow|Tomorrow:400,700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+* {
+  font-family: Tomorrow, sans-serif;
+}
+
+button {
+  @include glitch-btn;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+.main-container {
+  min-height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+// Comment: The glitch effect is applied to all buttons. 
+// To change this, move the @include glitch-btn to specific button classes in your components.

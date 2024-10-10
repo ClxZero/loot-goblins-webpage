@@ -1,0 +1,27 @@
+@import '../../../../variables';
+
+$table-color: #e0e0e0; // Light gray for readability
+$hover-color: rgba(255, 255, 255, 0.1);
+
+table {
+  background: transparent;
+  color: $text-color;
+  width: 100%;
+  border-collapse: collapse;
+
+  th, td {
+    padding: 10px;
+    border: 1px solid $text-color;
+    text-align: left;
+    transition: background-color 0.3s ease-in-out; // Add this line
+
+    &:hover {
+      background-color: $hover-color;
+    }
+  }
+}
+
+.icon-image {
+  max-width: 100px;
+  height: auto;
+}

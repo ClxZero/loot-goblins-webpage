@@ -1,0 +1,25 @@
+<!-- <div id="table-container"
+[@fadeAnimation]="animationState"
+(animationDone)="resetAnimationState()"
+> -->
+<div id="table-container" [@fadeAnimation]="animationState" (animationDone)="resetAnimationState()">
+  <table>
+    <thead>
+      <tr>
+        <th *ngFor="let column of displayedColumns">{{ column.title }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of tableData?.rows">
+        <td *ngFor="let column of displayedColumns">
+          @if (isImageColumn(column.key)) {
+            <img [src]="row[column.key]" alt="Icon" class="icon-image">
+          } @else {
+            {{ row[column.key] }}
+          }
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<!-- </div> -->

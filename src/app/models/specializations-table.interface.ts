@@ -1,21 +1,53 @@
-export interface SpecializationsTable {
-  spec_type: string;
-  spec_target: string;
-  spec_name: string;
-  spec_description: string;
-  spec_img_url?: string;
-  players?: string | string[];
-  extra_info?: string;
+/** Users info
+ * relation out on id */
+export interface User {
+  id: string;
+  username: string;
+  display_name: string;
 }
 
-export interface SpecializationsTableTrimmed {
-  spec_name: string;
-  spec_description: string;
-  spec_img_url?: string;
-  players?: string[];
-  extra_info?: string;
+/** Players info
+ * relation in on use_id with User.id */
+export interface Player {
+  /** Relation with User.id */
+  user_id: string;
+  name: string;
+  /** Really a boolean in mayus */
+  is_default: string;
 }
 
-export interface SpecializationsTableParsed {
-  [key: string]: {[key: string]: SpecializationsTableTrimmed[]};
+/** All details about a specialization
+ * relation out on id */
+export interface SpecializationsDetails {
+  /** String of name, relates out */
+  id: string;
+  name: string;
+  levels: string;
+  type: string;
+  affected: string;
+  category: string;
+  identity: string;
+  description: string;
+  icon_url: string;
 }
+
+/** Players who have a specialization in a certain point in time
+ * relation in on use_id with User.id
+ * relation in on  specialization_id with SpecializationsDetails.id */
+export interface PlayerSpec {
+  /** Relation with User.id */
+  user_id: string;
+  level: string;
+  /** Relation with SpecializationsDetails.id */
+  specialization_id: string;
+}
+
+export interface TableData {
+  columns: ColumnConfig[];
+  rows: any[];
+}
+
+export type ColumnConfig = {
+  title: string;
+  key: string;
+};
