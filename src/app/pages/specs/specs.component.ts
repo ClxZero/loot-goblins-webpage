@@ -27,7 +27,8 @@ export type TableConfig =
   | 'unassignedSpecializations'
   | 'allSpecializations'
   | 'userIdentities'
-  | 'conciseAssignedSpecializations';
+  | 'conciseAssignedSpecializations'
+  | 'experts';
 
 @Component({
   selector: 'specializations',
@@ -181,7 +182,9 @@ export class SpecsComponent implements OnInit {
   combineDataWithSwitch(type: TableConfig): TableData {
     const userMap = new Map(this.users.map(user => [user.id, user]));
     const specializationMap = new Map(
-      this.specs_detail.map(spec => [spec.id, spec])
+      this.specs_detail
+        .filter(spec => spec.active.toUpperCase() === 'TRUE')  // Filter active specializations
+        .map(spec => [spec.id, spec])
     );
 
     let rows: any[];
@@ -193,12 +196,15 @@ export class SpecsComponent implements OnInit {
         const specUserMap = new Map<string, string[]>();
 
         this.player_spec.forEach(spec => {
-          const user = userMap.get(spec.user_id);
-          if (user) {
-            if (!specUserMap.has(spec.specialization_id)) {
-              specUserMap.set(spec.specialization_id, []);
+          const specialization = specializationMap.get(spec.specialization_id);
+          if (specialization) {  // Only process if the specialization is active
+            const user = userMap.get(spec.user_id);
+            if (user) {
+              if (!specUserMap.has(spec.specialization_id)) {
+                specUserMap.set(spec.specialization_id, []);
+              }
+              specUserMap.get(spec.specialization_id)!.push(user.display_name);
             }
-            specUserMap.get(spec.specialization_id)!.push(user.display_name);
           }
         });
 
@@ -261,7 +267,7 @@ export class SpecsComponent implements OnInit {
         const assignedSpecIds = new Set(
           this.player_spec.map(spec => spec.specialization_id)
         );
-        rows = this.specs_detail
+        rows = Array.from(specializationMap.values())
           .filter(spec => !assignedSpecIds.has(spec.id))
           .map(spec => ({
             ...spec,
@@ -280,7 +286,7 @@ export class SpecsComponent implements OnInit {
         break;
 
       case 'allSpecializations':
-        rows = this.specs_detail.map(spec => ({
+        rows = Array.from(specializationMap.values()).map(spec => ({
           ...spec,
           levels: spec.levels || 'N/A',
         }));
@@ -308,6 +314,57 @@ export class SpecsComponent implements OnInit {
           {title: 'User', key: 'display_name'},
           {title: 'Identity', key: 'identity'},
           {title: 'Specializations', key: 'specializations'},
+        ];
+        break;
+
+      case 'experts':
+        const expertUsers = new Map<string, Map<string, string[]>>();
+        const affectedTotals = new Map<string, number>();
+
+        // Count total specializations for each affected category
+        Array.from(specializationMap.values()).forEach(spec => {
+          affectedTotals.set(spec.affected, (affectedTotals.get(spec.affected) || 0) + 1);
+        });
+
+        this.player_spec.forEach(spec => {
+          const specialization = specializationMap.get(spec.specialization_id);
+          if (specialization) {
+            const user = userMap.get(spec.user_id);
+            if (user) {
+              if (!expertUsers.has(user.id)) {
+                expertUsers.set(user.id, new Map());
+              }
+              const userAffected = expertUsers.get(user.id)!;
+              if (!userAffected.has(specialization.affected)) {
+                userAffected.set(specialization.affected, []);
+              }
+              userAffected.get(specialization.affected)!.push(specialization.name);
+            }
+          }
+        });
+
+        rows = [];
+        expertUsers.forEach((affectedMap, userId) => {
+          affectedMap.forEach((specializations, affected) => {
+            if (specializations.length >= 2) {
+              const user = userMap.get(userId)!;
+              const totalForAffected = affectedTotals.get(affected) || 0;
+              rows.push({
+                display_name: user.display_name,
+                affected: affected,
+                specializations: specializations.join(', '),
+                total: `${specializations.length}/${totalForAffected}`,
+                isComplete: specializations.length === totalForAffected // Add this line
+              });
+            }
+          });
+        });
+
+        columns = [
+          {title: 'Godlike-being', key: 'display_name'},
+          {title: 'Expertise', key: 'affected'},
+          {title: 'Specializations', key: 'specializations'},
+          {title: 'Total', key: 'total'}
         ];
         break;
 

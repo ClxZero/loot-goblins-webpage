@@ -23,8 +23,12 @@ import {
 export class DynamicTableComponent implements OnChanges {
   @Input() tableData: TableData | null = null;
   @Input() animate = false;
+  @Input() highlightComplete: boolean = false;
+
   displayedColumns: ColumnConfig[] = [];
   animationState = 'in';
+  sortColumn: string | null = null;
+  sortDirection: 'asc' | 'desc' = 'asc';
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['tableData'] && this.tableData) {
@@ -44,5 +48,33 @@ export class DynamicTableComponent implements OnChanges {
 
   isImageColumn(key: string): boolean {
     return key === 'icon_url';
+  }
+
+  shouldHighlight(row: any): boolean {
+    return this.highlightComplete && row.isComplete === true;
+  }
+
+  sortData(column: string) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+
+    if (this.tableData) {
+      this.tableData.rows.sort((a, b) => {
+        const valueA = a[column];
+        const valueB = b[column];
+        if (valueA < valueB) return this.sortDirection === 'asc' ? -1 : 1;
+        if (valueA > valueB) return this.sortDirection === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+  }
+
+  getSortIcon(column: string): string {
+    if (this.sortColumn !== column) return '⇵';
+    return this.sortDirection === 'asc' ? '↑' : '↓';
   }
 }

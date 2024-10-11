@@ -57,6 +57,13 @@
       >
         Quick View
       </button>
+      <button
+        (click)="changeParameters('experts')"
+        [class.active]="currentConfig === 'experts'"
+        data-text="Experts"
+      >
+        Experts
+      </button>
     </div>
 
     @if (selectedData) {
@@ -83,7 +90,11 @@
         <ng-container
           *ngComponentOutlet="
             loadDynamicTable();
-            inputs: {tableData: selectedData, animate: animateTable}
+            inputs: {
+              tableData: selectedData,
+              animate: animateTable,
+              highlightComplete: currentConfig === 'experts'
+            }
           "
         >
         </ng-container>

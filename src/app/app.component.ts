@@ -3,6 +3,7 @@ import {CommonModule, isPlatformBrowser} from '@angular/common';
 import {RouterOutlet, Router, NavigationEnd, Event} from '@angular/router';
 import {ParticleService} from './services/particle.service';
 import {filter} from 'rxjs/operators';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,8 @@ import {filter} from 'rxjs/operators';
 })
 export class AppComponent implements OnInit, OnDestroy {
   showParticles = false;
+  isHomePage = false;
+  private routerSubscription: Subscription | undefined;
 
   constructor(
     private particleService: ParticleService, 
@@ -23,10 +26,11 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
-      this.router.events.pipe(
+      this.routerSubscription = this.router.events.pipe(
         filter((event): event is NavigationEnd => event instanceof NavigationEnd)
       ).subscribe((event: NavigationEnd) => {
         this.showParticles = event.urlAfterRedirects === '/specs';
+        this.isHomePage = event.urlAfterRedirects === '/' || event.urlAfterRedirects === '/home';
         if (this.showParticles) {
           const canvas = this.el.nativeElement.querySelector('#particle-canvas') as HTMLCanvasElement;
           if (canvas) {
@@ -42,6 +46,9 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (isPlatformBrowser(this.platformId)) {
       this.particleService.destroy();
+      if (this.routerSubscription) {
+        this.routerSubscription.unsubscribe();
+      }
     }
   }
 }

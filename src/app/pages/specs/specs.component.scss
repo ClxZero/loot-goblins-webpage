@@ -27,8 +27,9 @@
 
 .search-bar {
   display: flex;
+  flex-wrap: wrap;
   margin-bottom: 20px;
-  width: 100%; // Match the width of the table
+  width: 100%;
 
   input,
   select {
@@ -44,21 +45,43 @@
   }
 
   input {
-    flex-grow: 1;
-    border-radius: 4px 0 0 4px;
+    flex: 1 1 100%;
+    border-radius: 4px 4px 0 0;
   }
 
   select {
+    flex: 1 1 50%;
     border-left: none;
-    color: $text-color; // Use the text color from variables
+    border-top: none;
 
-    option {
-      background-color: rgba(0, 0, 0, 0.9); // Even darker background for options
-      color: $text-color; // Use the text color from variables
+    &:first-of-type {
+      border-radius: 0 0 0 4px;
     }
 
-    &:hover, &:focus {
-      background-color: rgba(0, 0, 0, 0.8); // Slightly lighter on hover/focus
+    &:last-of-type {
+      border-radius: 0 0 4px 0;
+    }
+  }
+
+  @media (min-width: 701px) {
+    flex-wrap: nowrap;
+
+    input {
+      flex: 1 1 auto;
+      border-radius: 4px 0 0 4px;
+    }
+
+    select {
+      flex: 0 0 auto;
+      border-top: 1px solid $text-color;
+
+      &:first-of-type {
+        border-radius: 0;
+      }
+
+      &:last-of-type {
+        border-radius: 0 4px 4px 0;
+      }
     }
   }
 }
@@ -167,6 +190,14 @@
     left: -2px;
     text-shadow: -2px 0 #00fff9;
     animation: glitch-anim-2 3s infinite linear alternate-reverse;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 2rem;
   }
 }
 

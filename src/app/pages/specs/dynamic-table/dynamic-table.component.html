@@ -2,23 +2,31 @@
 [@fadeAnimation]="animationState"
 (animationDone)="resetAnimationState()"
 > -->
-<div id="table-container" [@fadeAnimation]="animationState" (animationDone)="resetAnimationState()">
+<div
+  id="table-container"
+  [@fadeAnimation]="animationState"
+  (animationDone)="resetAnimationState()"
+>
   <table>
     <thead>
       <tr>
-        <th *ngFor="let column of displayedColumns">{{ column.title }}</th>
+        <th *ngFor="let column of displayedColumns" (click)="sortData(column.key)">
+          {{ column.title }} <span class="sort-icon">{{ getSortIcon(column.key) }}</span>
+        </th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let row of tableData?.rows">
-        <td *ngFor="let column of displayedColumns">
-          @if (isImageColumn(column.key)) {
-            <img [src]="row[column.key]" alt="Icon" class="icon-image">
-          } @else {
-            {{ row[column.key] }}
-          }
-        </td>
-      </tr>
+      @for (row of tableData?.rows; track row) {
+        <tr [class.golden-glow]="shouldHighlight(row)">
+          <td *ngFor="let column of displayedColumns">
+            @if (isImageColumn(column.key)) {
+              <img [src]="row[column.key]" alt="Icon" class="icon-image" />
+            } @else {
+              {{ row[column.key] }}
+            }
+          </td>
+        </tr>
+      }
     </tbody>
   </table>
 </div>

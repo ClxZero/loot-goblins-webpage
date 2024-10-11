@@ -21,3 +21,15 @@
     height: 100%;
     z-index: 0;
 }
+
+#mayfly-logo {
+    position: absolute;
+    z-index: -1;
+    top: 35%;
+    right: 0;
+    max-width: 80%;
+    height: auto;
+    mix-blend-mode: screen;
+    opacity: 0.6;
+    pointer-events: none;
+  }

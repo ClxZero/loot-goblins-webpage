@@ -68,6 +68,27 @@
       z-index: 1;
     }
   }
+
+  .subtitle {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: $text-color;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    align-self: flex-end;
+    text-align: right;
+    max-width: 80%;
+    position: relative;
+    z-index: 2;
+
+    &.one {
+      margin-top: -2rem;
+      padding-right: 2rem;  
+    }
+  }
+
 }
 
 .glitch-title {
@@ -333,6 +354,26 @@ section {
       #main-img {
         max-width: 80%;
       }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  #hero-section {
+    .subtitle {
+      font-size: 1.2rem;
+      max-width: 90%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  #hero-section {
+    .subtitle {
+      font-size: 1rem;
+      max-width: 100%;
+      align-self: center;
+      text-align: center;
     }
   }
 }

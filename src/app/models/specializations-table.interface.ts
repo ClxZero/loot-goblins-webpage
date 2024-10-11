@@ -29,6 +29,7 @@ export interface SpecializationsDetails {
   identity: string;
   description: string;
   icon_url: string;
+  active: string; // actually a boolean, they arrive as 'TRUE' or 'FALSE'
 }
 
 /** Players who have a specialization in a certain point in time
