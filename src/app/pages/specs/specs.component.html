@@ -10,6 +10,7 @@
         placeholder="Search..."
       />
       <select [(ngModel)]="searchColumn" (change)="filterData()">
+        <option value="all">All Columns</option>
         @for (column of selectedData?.columns; track column.key) {
           <option [value]="column.key">{{ column.title }}</option>
         }

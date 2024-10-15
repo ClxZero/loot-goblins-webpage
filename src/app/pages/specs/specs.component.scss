@@ -53,6 +53,17 @@
     flex: 1 1 50%;
     border-left: none;
     border-top: none;
+    background-color: rgba(0, 0, 0, 0.7); // Darker background
+    color: $text-color; // Ensure text color contrasts with the background
+
+    option {
+      background-color: rgba(0, 0, 0, 0.9); // Even darker background for options
+      color: $text-color; // Use the text color from variables
+    }
+
+    &:hover, &:focus {
+      background-color: rgba(0, 0, 0, 0.8); // Slightly lighter on hover/focus
+    }
 
     &:first-of-type {
       border-radius: 0 0 0 4px;

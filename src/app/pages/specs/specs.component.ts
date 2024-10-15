@@ -46,7 +46,7 @@ export class SpecsComponent implements OnInit {
   originalData: TableData | null = null; // New property to store original data
   currentConfig: TableConfig = 'assignedSpecializations';
   searchTerm = '';
-  searchColumn = '';
+  searchColumn = 'all'; // This line ensures 'all' is the default value
   searchSubject = new Subject<string>();
 
   // Change typeFilter to categoryFilter
@@ -83,6 +83,9 @@ export class SpecsComponent implements OnInit {
     this.url_players,
     this.url_users,
   ];
+
+  // Add this new property
+  expertAffectedCategories: string[] = ['Gear Workbench', 'Lightning Impulse Regulator',];
 
   constructor(
     private http: HttpClient,
@@ -122,7 +125,8 @@ export class SpecsComponent implements OnInit {
         );
         this.selectedData = {...this.originalData};
         this.updateCategories();
-        this.searchColumn = this.selectedData.columns[0].key;
+        // Remove this line as we want to keep 'all' as the default
+        // this.searchColumn = this.selectedData.columns[0].key;
         this.filterData();
       },
       error: err => {
@@ -172,9 +176,10 @@ export class SpecsComponent implements OnInit {
   changeParameters(config: TableConfig) {
     this.animateTable = true;
     this.currentConfig = config;
-    this.originalData = this.combineDataWithSwitch(config); // Store original data
-    this.selectedData = {...this.originalData}; // Create a copy for selectedData
-    this.searchColumn = this.selectedData.columns[0].key;
+    this.originalData = this.combineDataWithSwitch(config);
+    this.selectedData = {...this.originalData};
+    // Remove this line to keep 'all' as the default
+    // this.searchColumn = this.selectedData.columns[0].key;
     this.updateCategories();
     this.filterData();
   }
@@ -346,7 +351,8 @@ export class SpecsComponent implements OnInit {
         rows = [];
         expertUsers.forEach((affectedMap, userId) => {
           affectedMap.forEach((specializations, affected) => {
-            if (specializations.length >= 2) {
+            const isExpertCategory = this.expertAffectedCategories.includes(affected);
+            if (isExpertCategory || specializations.length >= 2) {
               const user = userMap.get(userId)!;
               const totalForAffected = affectedTotals.get(affected) || 0;
               rows.push({
@@ -354,7 +360,7 @@ export class SpecsComponent implements OnInit {
                 affected: affected,
                 specializations: specializations.join(', '),
                 total: `${specializations.length}/${totalForAffected}`,
-                isComplete: specializations.length === totalForAffected // Add this line
+                isComplete: isExpertCategory || specializations.length === totalForAffected
               });
             }
           });
@@ -427,15 +433,13 @@ export class SpecsComponent implements OnInit {
       let matchesCategory = true;
 
       if (this.searchTerm) {
-        if (
-          this.currentConfig === 'assignedSpecializations' &&
-          this.searchColumn === 'display_name'
-        ) {
-          // For assigned specializations, search in the comma-separated list of names
-          matchesSearch = row[this.searchColumn]
-            .toLowerCase()
-            .includes(this.searchTerm.toLowerCase());
+        if (this.searchColumn === 'all') {
+          // Search in all columns
+          matchesSearch = Object.values(row).some(value => 
+            String(value).toLowerCase().includes(this.searchTerm.toLowerCase())
+          );
         } else {
+          // Search in specific column
           matchesSearch = String(row[this.searchColumn])
             .toLowerCase()
             .includes(this.searchTerm.toLowerCase());
