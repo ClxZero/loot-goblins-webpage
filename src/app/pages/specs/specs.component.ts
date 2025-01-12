@@ -115,7 +115,7 @@ export class SpecsComponent implements OnInit, OnDestroy {
 
   private loadData(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.setRandomBackground();
+      // this.setRandomBackground();
     }
 
     const observables = this.urls.map((url, index) =>
@@ -183,23 +183,24 @@ export class SpecsComponent implements OnInit, OnDestroy {
     this.loadData();
   }
 
-  setRandomBackground(): void {
-    const randomBackground =
-      this.backgrounds[Math.floor(Math.random() * this.backgrounds.length)];
-    const mainContainerElement = document.querySelector('.main-container');
+  // TODO This was moved to the app.component.ts because it may have been an scope issue, delete later if it was fixed
+  // setRandomBackground(): void {
+  //   const randomBackground =
+  //     this.backgrounds[Math.floor(Math.random() * this.backgrounds.length)];
+  //   const mainContainerElement = document.querySelector('.main-container');
 
-    if (mainContainerElement) {
-      // Remove home background and any existing specs backgrounds
-      this.renderer.removeClass(mainContainerElement, 'home-bg');
-      this.backgrounds.forEach(bg => {
-        this.renderer.removeClass(mainContainerElement, bg);
-      });
+  //   if (mainContainerElement) {
+  //     // Remove home background and any existing specs backgrounds
+  //     this.renderer.removeClass(mainContainerElement, 'home-bg');
+  //     this.backgrounds.forEach(bg => {
+  //       this.renderer.removeClass(mainContainerElement, bg);
+  //     });
 
-      // Add new background classes
-      this.renderer.addClass(mainContainerElement, 'specs-bg');
-      this.renderer.addClass(mainContainerElement, randomBackground);
-    }
-  }
+  //     // Add new background classes
+  //     this.renderer.addClass(mainContainerElement, 'specs-bg');
+  //     this.renderer.addClass(mainContainerElement, randomBackground);
+  //   }
+  // }
 
   changeParameters(config: TableConfig) {
     this.animateTable = true;
