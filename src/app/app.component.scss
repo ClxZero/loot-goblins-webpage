@@ -6,11 +6,10 @@
 
 .main-container {
     min-height: 100vh;
-    background: url("../assets/imgs/fondo-completo.webp") no-repeat center top;
-    background-size: cover;
     position: relative;
     z-index: 1;
     overflow-y: auto;
+    transition: background-image 0.3s ease-out;
 }
 
 #particle-canvas {
@@ -32,4 +31,4 @@
     mix-blend-mode: screen;
     opacity: 0.6;
     pointer-events: none;
-  }
+}

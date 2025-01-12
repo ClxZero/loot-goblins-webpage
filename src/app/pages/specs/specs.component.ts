@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import {
   Component,
   OnInit,
@@ -5,6 +6,7 @@ import {
   Inject,
   PLATFORM_ID,
   ViewContainerRef,
+  OnDestroy,
 } from '@angular/core';
 import {CommonModule, isPlatformBrowser} from '@angular/common';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
@@ -19,8 +21,10 @@ import {
   TableData,
 } from '../../models/specializations-table.interface';
 import {forkJoin, map, Subscription, Subject} from 'rxjs';
-import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, filter} from 'rxjs/operators';
 import {DynamicTableComponent} from './dynamic-table/dynamic-table.component';
+import {NavbarComponent} from '../../components/navbar/navbar.component';
+import {Router, NavigationEnd} from '@angular/router';
 
 export type TableConfig =
   | 'assignedSpecializations'
@@ -33,11 +37,11 @@ export type TableConfig =
 @Component({
   selector: 'specializations',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule],
+  imports: [CommonModule, HttpClientModule, FormsModule, NavbarComponent],
   templateUrl: './specs.component.html',
   styleUrl: './specs.component.scss',
 })
-export class SpecsComponent implements OnInit {
+export class SpecsComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
   viewContainerRef!: ViewContainerRef;
 
@@ -50,7 +54,7 @@ export class SpecsComponent implements OnInit {
   searchSubject = new Subject<string>();
 
   // Change typeFilter to categoryFilter
-  categoryFilter: string = 'all';
+  categoryFilter = 'all';
   categories: string[] = ['all'];
 
   player_spec: PlayerSpec[] = [];
@@ -85,31 +89,43 @@ export class SpecsComponent implements OnInit {
   ];
 
   // Add this new property
-  expertAffectedCategories: string[] = ['Gear Workbench', 'Lightning Impulse Regulator',];
+  expertAffectedCategories: string[] = [
+    'Gear Workbench',
+    'Lightning Impulse Regulator',
+  ];
 
   constructor(
     private http: HttpClient,
     private renderer: Renderer2,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private router: Router
   ) {
     this.searchSubject
       .pipe(debounceTime(200), distinctUntilChanged())
       .subscribe(() => {
         this.filterData();
       });
+
+    this.subscriptions.add(
+      this.router.events
+        .pipe(
+          filter(event => event instanceof NavigationEnd),
+          filter(event => (event as NavigationEnd).url.includes('/specs'))
+        )
+        .subscribe(() => {
+          this.loadData();
+        })
+    );
   }
 
-  getCSV(url: string) {
-    return this.http
-      .get(url, {responseType: 'text'})
-      .pipe(map(async (x: string) => await csvtojson().fromString(x)));
-  }
-
-  async ngOnInit(): Promise<void> {
+  private loadData(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.setRandomBackground();
     }
-    const observables = this.urls.map(url => this.getCSV(url));
+
+    const observables = this.urls.map(url =>
+      this.getCSV(`${url}&nocache=${new Date().getTime()}`)
+    );
 
     forkJoin(observables).subscribe({
       next: async results => {
@@ -125,8 +141,6 @@ export class SpecsComponent implements OnInit {
         );
         this.selectedData = {...this.originalData};
         this.updateCategories();
-        // Remove this line as we want to keep 'all' as the default
-        // this.searchColumn = this.selectedData.columns[0].key;
         this.filterData();
       },
       error: err => {
@@ -136,6 +150,16 @@ export class SpecsComponent implements OnInit {
         console.log('Vitaly rulz');
       },
     });
+  }
+
+  getCSV(url: string) {
+    return this.http
+      .get(url, {responseType: 'text'})
+      .pipe(map(async (x: string) => await csvtojson().fromString(x)));
+  }
+
+  async ngOnInit(): Promise<void> {
+    this.loadData();
   }
 
   setRandomBackground(): void {
@@ -155,21 +179,9 @@ export class SpecsComponent implements OnInit {
         'background-position',
         'center'
       );
-      this.renderer.setStyle(
-        mainContainerElement,
-        'background-size',
-        'cover'
-      );
-      this.renderer.setStyle(
-        mainContainerElement,
-        'position',
-        'relative'
-      );
-      this.renderer.setStyle(
-        mainContainerElement,
-        'z-index',
-        '1'
-      );
+      this.renderer.setStyle(mainContainerElement, 'background-size', 'cover');
+      this.renderer.setStyle(mainContainerElement, 'position', 'relative');
+      this.renderer.setStyle(mainContainerElement, 'z-index', '1');
     }
   }
 
@@ -188,7 +200,7 @@ export class SpecsComponent implements OnInit {
     const userMap = new Map(this.users.map(user => [user.id, user]));
     const specializationMap = new Map(
       this.specs_detail
-        .filter(spec => spec.active.toUpperCase() === 'TRUE')  // Filter active specializations
+        .filter(spec => spec.active.toUpperCase() === 'TRUE') // Filter active specializations
         .map(spec => [spec.id, spec])
     );
 
@@ -202,7 +214,8 @@ export class SpecsComponent implements OnInit {
 
         this.player_spec.forEach(spec => {
           const specialization = specializationMap.get(spec.specialization_id);
-          if (specialization) {  // Only process if the specialization is active
+          if (specialization) {
+            // Only process if the specialization is active
             const user = userMap.get(spec.user_id);
             if (user) {
               if (!specUserMap.has(spec.specialization_id)) {
@@ -328,7 +341,10 @@ export class SpecsComponent implements OnInit {
 
         // Count total specializations for each affected category
         Array.from(specializationMap.values()).forEach(spec => {
-          affectedTotals.set(spec.affected, (affectedTotals.get(spec.affected) || 0) + 1);
+          affectedTotals.set(
+            spec.affected,
+            (affectedTotals.get(spec.affected) || 0) + 1
+          );
         });
 
         this.player_spec.forEach(spec => {
@@ -343,7 +359,9 @@ export class SpecsComponent implements OnInit {
               if (!userAffected.has(specialization.affected)) {
                 userAffected.set(specialization.affected, []);
               }
-              userAffected.get(specialization.affected)!.push(specialization.name);
+              userAffected
+                .get(specialization.affected)!
+                .push(specialization.name);
             }
           }
         });
@@ -351,7 +369,8 @@ export class SpecsComponent implements OnInit {
         rows = [];
         expertUsers.forEach((affectedMap, userId) => {
           affectedMap.forEach((specializations, affected) => {
-            const isExpertCategory = this.expertAffectedCategories.includes(affected);
+            const isExpertCategory =
+              this.expertAffectedCategories.includes(affected);
             if (isExpertCategory || specializations.length >= 2) {
               const user = userMap.get(userId)!;
               const totalForAffected = affectedTotals.get(affected) || 0;
@@ -360,7 +379,9 @@ export class SpecsComponent implements OnInit {
                 affected: affected,
                 specializations: specializations.join(', '),
                 total: `${specializations.length}/${totalForAffected}`,
-                isComplete: isExpertCategory || specializations.length === totalForAffected
+                isComplete:
+                  isExpertCategory ||
+                  specializations.length === totalForAffected,
               });
             }
           });
@@ -370,7 +391,7 @@ export class SpecsComponent implements OnInit {
           {title: 'Godlike-being', key: 'display_name'},
           {title: 'Expertise', key: 'affected'},
           {title: 'Specializations', key: 'specializations'},
-          {title: 'Total', key: 'total'}
+          {title: 'Total', key: 'total'},
         ];
         break;
 
@@ -435,7 +456,7 @@ export class SpecsComponent implements OnInit {
       if (this.searchTerm) {
         if (this.searchColumn === 'all') {
           // Search in all columns
-          matchesSearch = Object.values(row).some(value => 
+          matchesSearch = Object.values(row).some(value =>
             String(value).toLowerCase().includes(this.searchTerm.toLowerCase())
           );
         } else {
@@ -533,6 +554,16 @@ export class SpecsComponent implements OnInit {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+
+    // Clean up background when leaving the component
+    if (isPlatformBrowser(this.platformId)) {
+      const mainContainerElement = document.querySelector('.main-container');
+      if (mainContainerElement) {
+        this.renderer.removeStyle(mainContainerElement, 'background-image');
+        this.renderer.removeStyle(mainContainerElement, 'background-position');
+        this.renderer.removeStyle(mainContainerElement, 'background-size');
+      }
+    }
   }
 
   // Change updateTypes to updateCategories
