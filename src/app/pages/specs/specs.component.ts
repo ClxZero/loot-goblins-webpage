@@ -11,7 +11,7 @@ import {
 import {CommonModule, isPlatformBrowser} from '@angular/common';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
-import csvtojson from 'csvtojson';
+import {parse} from 'papaparse';
 import {
   ColumnConfig,
   Player,
@@ -118,18 +118,19 @@ export class SpecsComponent implements OnInit, OnDestroy {
       this.setRandomBackground();
     }
 
-    const observables = this.urls.map(url =>
-      this.getCSV(`${url}&nocache=${new Date().getTime()}`)
+    const observables = this.urls.map((url, index) =>
+      this.getCSV(url + `&nocache=${new Date().getTime()}`, index)
     );
 
     forkJoin(observables).subscribe({
       next: async results => {
         const parsedData = await Promise.all(results);
 
-        this.player_spec = parsedData[0];
-        this.specs_detail = parsedData[1];
-        this.players = parsedData[2];
-        this.users = parsedData[3];
+        // Add type assertions to each array
+        this.player_spec = parsedData[0] as PlayerSpec[];
+        this.specs_detail = parsedData[1] as SpecializationsDetails[];
+        this.players = parsedData[2] as Player[];
+        this.users = parsedData[3] as User[];
 
         this.originalData = this.combineDataWithSwitch(
           'assignedSpecializations'
@@ -147,10 +148,35 @@ export class SpecsComponent implements OnInit, OnDestroy {
     });
   }
 
-  getCSV(url: string) {
-    return this.http
-      .get(url, {responseType: 'text'})
-      .pipe(map(async (x: string) => await csvtojson().fromString(x)));
+  getCSV(url: string, index: number) {
+    return this.http.get(url, {responseType: 'text'}).pipe(
+      map((csvText: string) => {
+        return new Promise(resolve => {
+          parse(csvText, {
+            header: true,
+            complete: results => {
+              // Type assertion based on the index
+              switch (index) {
+                case 0:
+                  resolve(results.data as PlayerSpec[]);
+                  break;
+                case 1:
+                  resolve(results.data as SpecializationsDetails[]);
+                  break;
+                case 2:
+                  resolve(results.data as Player[]);
+                  break;
+                case 3:
+                  resolve(results.data as User[]);
+                  break;
+                default:
+                  resolve(results.data);
+              }
+            },
+          });
+        });
+      })
+    );
   }
 
   async ngOnInit(): Promise<void> {

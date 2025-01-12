@@ -4,9 +4,8 @@ import {
   Inject,
   PLATFORM_ID,
   HostListener,
-  OnInit,
-  Renderer2,
   OnDestroy,
+  Renderer2,
 } from '@angular/core';
 import {CommonModule, isPlatformBrowser} from '@angular/common';
 import {RouterModule} from '@angular/router';
@@ -19,20 +18,15 @@ import {NavbarComponent} from '../../components/navbar/navbar.component';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements AfterViewInit, OnInit, OnDestroy {
+export class HomeComponent implements AfterViewInit, OnDestroy {
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private renderer: Renderer2
   ) {}
 
-  ngOnInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      this.setHomeBackground();
-    }
-  }
-
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
+      this.setHomeBackground();
       this.setRandomShineDelays();
     }
   }
