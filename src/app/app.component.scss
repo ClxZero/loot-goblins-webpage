@@ -10,6 +10,21 @@
     z-index: 1;
     overflow-y: auto;
     transition: background-image 0.3s ease-out;
+
+    &.home-bg {
+        background: url("/assets/imgs/fondo-completo.webp") no-repeat center top;
+        background-size: cover;
+    }
+
+    &.specs-bg {
+        background-size: cover;
+        background-position: center;
+        
+        &.dedloc { background-image: url("/assets/imgs/dedloc_bg.webp"); }
+        &.turkoid { background-image: url("/assets/imgs/turkoid_bg.webp"); }
+        &.riot { background-image: url("/assets/imgs/riot_bg.webp"); }
+        &.vity { background-image: url("/assets/imgs/vity_bg.webp"); }
+    }
 }
 
 #particle-canvas {

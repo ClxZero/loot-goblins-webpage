@@ -62,12 +62,7 @@ export class SpecsComponent implements OnInit, OnDestroy {
   players: Player[] = [];
   users: User[] = [];
 
-  backgrounds: string[] = [
-    'assets/imgs/dedloc_bg.webp',
-    'assets/imgs/turkoid_bg.webp',
-    'assets/imgs/riot_bg.webp',
-    'assets/imgs/vity_bg.webp',
-  ];
+  backgrounds: string[] = ['dedloc', 'turkoid', 'riot', 'vity'];
 
   url_player_spec =
     'https://docs.google.com/spreadsheets/d/e/2PACX-1vSMZRxAoKLNnXSIYK6Ijuv1e4o0XduVGIJPiA1qSWPF9ezMkOOpdJj1fTNbOTsUeLDoqv5oCG2y3RoR/pub?gid=119581432&single=true&output=csv';
@@ -165,23 +160,18 @@ export class SpecsComponent implements OnInit, OnDestroy {
   setRandomBackground(): void {
     const randomBackground =
       this.backgrounds[Math.floor(Math.random() * this.backgrounds.length)];
-
     const mainContainerElement = document.querySelector('.main-container');
 
     if (mainContainerElement) {
-      this.renderer.setStyle(
-        mainContainerElement,
-        'background-image',
-        `url(${randomBackground})`
-      );
-      this.renderer.setStyle(
-        mainContainerElement,
-        'background-position',
-        'center'
-      );
-      this.renderer.setStyle(mainContainerElement, 'background-size', 'cover');
-      this.renderer.setStyle(mainContainerElement, 'position', 'relative');
-      this.renderer.setStyle(mainContainerElement, 'z-index', '1');
+      // Remove home background and any existing specs backgrounds
+      this.renderer.removeClass(mainContainerElement, 'home-bg');
+      this.backgrounds.forEach(bg => {
+        this.renderer.removeClass(mainContainerElement, bg);
+      });
+
+      // Add new background classes
+      this.renderer.addClass(mainContainerElement, 'specs-bg');
+      this.renderer.addClass(mainContainerElement, randomBackground);
     }
   }
 
@@ -555,13 +545,13 @@ export class SpecsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
 
-    // Clean up background when leaving the component
     if (isPlatformBrowser(this.platformId)) {
       const mainContainerElement = document.querySelector('.main-container');
       if (mainContainerElement) {
-        this.renderer.removeStyle(mainContainerElement, 'background-image');
-        this.renderer.removeStyle(mainContainerElement, 'background-position');
-        this.renderer.removeStyle(mainContainerElement, 'background-size');
+        this.renderer.removeClass(mainContainerElement, 'specs-bg');
+        this.backgrounds.forEach(bg => {
+          this.renderer.removeClass(mainContainerElement, bg);
+        });
       }
     }
   }

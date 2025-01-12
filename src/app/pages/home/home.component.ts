@@ -41,9 +41,7 @@ export class HomeComponent implements AfterViewInit, OnInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       const mainContainerElement = document.querySelector('.main-container');
       if (mainContainerElement) {
-        this.renderer.removeStyle(mainContainerElement, 'background-image');
-        this.renderer.removeStyle(mainContainerElement, 'background-position');
-        this.renderer.removeStyle(mainContainerElement, 'background-size');
+        this.renderer.removeClass(mainContainerElement, 'home-bg');
       }
     }
   }
@@ -51,17 +49,12 @@ export class HomeComponent implements AfterViewInit, OnInit, OnDestroy {
   setHomeBackground(): void {
     const mainContainerElement = document.querySelector('.main-container');
     if (mainContainerElement) {
-      this.renderer.setStyle(
-        mainContainerElement,
-        'background-image',
-        'url("../assets/imgs/fondo-completo.webp")'
-      );
-      this.renderer.setStyle(
-        mainContainerElement,
-        'background-position',
-        'center top'
-      );
-      this.renderer.setStyle(mainContainerElement, 'background-size', 'cover');
+      this.renderer.removeClass(mainContainerElement, 'specs-bg');
+      this.renderer.removeClass(mainContainerElement, 'dedloc');
+      this.renderer.removeClass(mainContainerElement, 'turkoid');
+      this.renderer.removeClass(mainContainerElement, 'riot');
+      this.renderer.removeClass(mainContainerElement, 'vity');
+      this.renderer.addClass(mainContainerElement, 'home-bg');
     }
   }
 
