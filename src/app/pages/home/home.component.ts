@@ -26,7 +26,6 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      // this.setHomeBackground();
       this.setRandomShineDelays();
     }
   }
@@ -39,20 +38,6 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       }
     }
   }
-
-  // TODO This was moved to the app.component.ts because it may have been an scope issue, delete later if it was fixed
-  // TODO: This is not working properly, but I may need it to fix some bg mistakes
-  // setHomeBackground(): void {
-  //   const mainContainerElement = document.querySelector('.main-container');
-  //   if (mainContainerElement) {
-  //     this.renderer.removeClass(mainContainerElement, 'specs-bg');
-  //     this.renderer.removeClass(mainContainerElement, 'dedloc');
-  //     this.renderer.removeClass(mainContainerElement, 'turkoid');
-  //     this.renderer.removeClass(mainContainerElement, 'riot');
-  //     this.renderer.removeClass(mainContainerElement, 'vity');
-  //     this.renderer.addClass(mainContainerElement, 'home-bg');
-  //   }
-  // }
 
   @HostListener('window:scroll', ['$event'])
   onWindowScroll() {

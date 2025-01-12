@@ -24,7 +24,12 @@ export class AppComponent implements OnInit, OnDestroy {
   showParticles = false;
   isHomePage = false;
   private routerSubscription: Subscription | undefined;
-  backgrounds: string[] = ['dedloc', 'turkoid', 'riot', 'vity'];
+  backgrounds: string[] = [
+    'assets/imgs/dedloc_bg.webp',
+    'assets/imgs/turkoid_bg.webp',
+    'assets/imgs/riot_bg.webp',
+    'assets/imgs/vity_bg.webp',
+  ];
 
   constructor(
     private particleService: ParticleService,
@@ -53,16 +58,37 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private handleRouteChange(url: string) {
-    const mainContainer =
+    const mainContainerElement =
       this.el.nativeElement.querySelector('.main-container');
-    if (!mainContainer) return;
+    if (!mainContainerElement) return;
 
-    // Remove all possible background classes
-    this.renderer.removeClass(mainContainer, 'home-bg');
-    this.renderer.removeClass(mainContainer, 'specs-bg');
-    this.backgrounds.forEach(bg => {
-      this.renderer.removeClass(mainContainer, bg);
-    });
+    // Set appropriate background
+    if (url === '/' || url === '/home') {
+      this.isHomePage = true;
+      this.renderer.setStyle(
+        mainContainerElement,
+        'background',
+        'url("../assets/imgs/fondo-completo.webp") no-repeat center top'
+      );
+    } else if (url === '/specs') {
+      this.isHomePage = false;
+      const randomBg =
+        this.backgrounds[Math.floor(Math.random() * this.backgrounds.length)];
+
+      this.renderer.setStyle(
+        mainContainerElement,
+        'background-image',
+        `url(${randomBg})`
+      );
+      this.renderer.setStyle(
+        mainContainerElement,
+        'background-position',
+        'center'
+      );
+      this.renderer.setStyle(mainContainerElement, 'background-size', 'cover');
+      this.renderer.setStyle(mainContainerElement, 'position', 'relative');
+      this.renderer.setStyle(mainContainerElement, 'z-index', '1');
+    }
 
     // Handle particles
     this.showParticles = url === '/specs';
@@ -73,18 +99,6 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     } else {
       this.particleService.destroy();
-    }
-
-    // Set appropriate background
-    if (url === '/' || url === '/home') {
-      this.isHomePage = true;
-      this.renderer.addClass(mainContainer, 'home-bg');
-    } else if (url === '/specs') {
-      this.isHomePage = false;
-      const randomBg =
-        this.backgrounds[Math.floor(Math.random() * this.backgrounds.length)];
-      this.renderer.addClass(mainContainer, 'specs-bg');
-      this.renderer.addClass(mainContainer, randomBg);
     }
   }
 
