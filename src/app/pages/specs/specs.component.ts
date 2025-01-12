@@ -62,7 +62,12 @@ export class SpecsComponent implements OnInit, OnDestroy {
   players: Player[] = [];
   users: User[] = [];
 
-  backgrounds: string[] = ['dedloc', 'turkoid', 'riot', 'vity'];
+  backgrounds: string[] = [
+    'assets/imgs/dedloc_bg.webp',
+    'assets/imgs/turkoid_bg.webp',
+    'assets/imgs/riot_bg.webp',
+    'assets/imgs/vity_bg.webp',
+  ];
 
   url_player_spec =
     'https://docs.google.com/spreadsheets/d/e/2PACX-1vSMZRxAoKLNnXSIYK6Ijuv1e4o0XduVGIJPiA1qSWPF9ezMkOOpdJj1fTNbOTsUeLDoqv5oCG2y3RoR/pub?gid=119581432&single=true&output=csv';
@@ -114,10 +119,6 @@ export class SpecsComponent implements OnInit, OnDestroy {
   }
 
   private loadData(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      // Useful to remember to use this to starting data
-    }
-
     const observables = this.urls.map((url, index) =>
       this.getCSV(url + `&nocache=${new Date().getTime()}`, index)
     );
@@ -180,6 +181,9 @@ export class SpecsComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit(): Promise<void> {
+    if (isPlatformBrowser(this.platformId)) {
+      this.setRandomBackground();
+    }
     this.loadData();
   }
 
@@ -548,6 +552,29 @@ export class SpecsComponent implements OnInit, OnDestroy {
       columns,
       rows,
     };
+  }
+
+  setRandomBackground(): void {
+    const randomBackground =
+      this.backgrounds[Math.floor(Math.random() * this.backgrounds.length)];
+
+    const mainContainerElement = document.querySelector('.main-container');
+
+    if (mainContainerElement) {
+      this.renderer.setStyle(
+        mainContainerElement,
+        'background-image',
+        `url(${randomBackground})`
+      );
+      this.renderer.setStyle(
+        mainContainerElement,
+        'background-position',
+        'center'
+      );
+      this.renderer.setStyle(mainContainerElement, 'background-size', 'cover');
+      this.renderer.setStyle(mainContainerElement, 'position', 'relative');
+      this.renderer.setStyle(mainContainerElement, 'z-index', '1');
+    }
   }
 
   ngOnDestroy(): void {

@@ -58,36 +58,35 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private handleRouteChange(url: string) {
-    const mainContainerElement =
-      this.el.nativeElement.querySelector('.main-container');
-    if (!mainContainerElement) return;
+    // const mainContainerElement =
+    //   this.el.nativeElement.querySelector('.main-container');
+    // if (!mainContainerElement) return;
 
     // Set appropriate background
     if (url === '/' || url === '/home') {
       this.isHomePage = true;
-      this.renderer.setStyle(
-        mainContainerElement,
-        'background',
-        'url("../assets/imgs/fondo-completo.webp") no-repeat center top'
-      );
+      // this.renderer.setStyle(
+      //   mainContainerElement,
+      //   'background',
+      //   'url("../assets/imgs/fondo-completo.webp") no-repeat center top'
+      // );
     } else if (url === '/specs') {
       this.isHomePage = false;
-      const randomBg =
-        this.backgrounds[Math.floor(Math.random() * this.backgrounds.length)];
-
-      this.renderer.setStyle(
-        mainContainerElement,
-        'background-image',
-        `url(${randomBg})`
-      );
-      this.renderer.setStyle(
-        mainContainerElement,
-        'background-position',
-        'center'
-      );
-      this.renderer.setStyle(mainContainerElement, 'background-size', 'cover');
-      this.renderer.setStyle(mainContainerElement, 'position', 'relative');
-      this.renderer.setStyle(mainContainerElement, 'z-index', '1');
+      // const randomBg =
+      //   this.backgrounds[Math.floor(Math.random() * this.backgrounds.length)];
+      // this.renderer.setStyle(
+      //   mainContainerElement,
+      //   'background-image',
+      //   `url(${randomBg})`
+      // );
+      // this.renderer.setStyle(
+      //   mainContainerElement,
+      //   'background-position',
+      //   'center'
+      // );
+      // this.renderer.setStyle(mainContainerElement, 'background-size', 'cover');
+      // this.renderer.setStyle(mainContainerElement, 'position', 'relative');
+      // this.renderer.setStyle(mainContainerElement, 'z-index', '1');
     }
 
     // Handle particles

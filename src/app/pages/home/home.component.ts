@@ -27,7 +27,17 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.setRandomShineDelays();
+      this.setDefaultBG();
     }
+  }
+
+  setDefaultBG() {
+    const mainContainerElement = document.querySelector('.main-container');
+    this.renderer.setStyle(
+      mainContainerElement,
+      'background',
+      'url("../assets/imgs/fondo-completo.webp") no-repeat center top'
+    );
   }
 
   ngOnDestroy() {
