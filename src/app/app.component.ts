@@ -8,7 +8,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import {CommonModule, isPlatformBrowser} from '@angular/common';
-import {RouterOutlet, Router, NavigationEnd, Event} from '@angular/router';
+import {RouterOutlet, Router, NavigationEnd} from '@angular/router';
 import {ParticleService} from './services/particle.service';
 import {filter} from 'rxjs/operators';
 import {Subscription} from 'rxjs';
@@ -23,7 +23,6 @@ import {Subscription} from 'rxjs';
 export class AppComponent implements OnInit, OnDestroy {
   showParticles = false;
   isHomePage = false;
-  isSpecsPage = false;
   private routerSubscription: Subscription | undefined;
   backgrounds: string[] = ['dedloc', 'turkoid', 'riot', 'vity'];
 
@@ -37,6 +36,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
+      // Initial background setup based on current route
+      this.handleRouteChange(this.router.url);
+
+      // Subscribe to route changes
       this.routerSubscription = this.router.events
         .pipe(
           filter(
@@ -44,69 +47,53 @@ export class AppComponent implements OnInit, OnDestroy {
           )
         )
         .subscribe((event: NavigationEnd) => {
-          this.showParticles = event.urlAfterRedirects === '/specs';
-          this.isSpecsPage = event.urlAfterRedirects === '/specs';
-          this.isHomePage =
-            event.urlAfterRedirects === '/' ||
-            event.urlAfterRedirects === '/home';
-          if (this.showParticles) {
-            const canvas = this.el.nativeElement.querySelector(
-              '#particle-canvas'
-            ) as HTMLCanvasElement;
-            if (canvas) {
-              this.particleService.init(canvas);
-            }
-          } else {
-            this.particleService.destroy();
-          }
-
-          if (this.isHomePage) {
-            this.setHomeBackground();
-          }
-
-          if (this.isSpecsPage) {
-            this.setRandomBackground();
-          }
+          this.handleRouteChange(event.urlAfterRedirects);
         });
     }
   }
-  // TODO: This is not working properly, but I may need it to fix some bg mistakes
-  setHomeBackground(): void {
-    const mainContainerElement = document.querySelector('.main-container');
-    if (mainContainerElement) {
-      this.renderer.removeClass(mainContainerElement, 'specs-bg');
-      this.renderer.removeClass(mainContainerElement, 'dedloc');
-      this.renderer.removeClass(mainContainerElement, 'turkoid');
-      this.renderer.removeClass(mainContainerElement, 'riot');
-      this.renderer.removeClass(mainContainerElement, 'vity');
-      this.renderer.addClass(mainContainerElement, 'home-bg');
+
+  private handleRouteChange(url: string) {
+    const mainContainer =
+      this.el.nativeElement.querySelector('.main-container');
+    if (!mainContainer) return;
+
+    // Remove all possible background classes
+    this.renderer.removeClass(mainContainer, 'home-bg');
+    this.renderer.removeClass(mainContainer, 'specs-bg');
+    this.backgrounds.forEach(bg => {
+      this.renderer.removeClass(mainContainer, bg);
+    });
+
+    // Handle particles
+    this.showParticles = url === '/specs';
+    if (this.showParticles) {
+      const canvas = this.el.nativeElement.querySelector('#particle-canvas');
+      if (canvas) {
+        this.particleService.init(canvas);
+      }
+    } else {
+      this.particleService.destroy();
     }
-  }
 
-  setRandomBackground(): void {
-    const randomBackground =
-      this.backgrounds[Math.floor(Math.random() * this.backgrounds.length)];
-    const mainContainerElement = document.querySelector('.main-container');
-
-    if (mainContainerElement) {
-      // Remove home background and any existing specs backgrounds
-      this.renderer.removeClass(mainContainerElement, 'home-bg');
-      this.backgrounds.forEach(bg => {
-        this.renderer.removeClass(mainContainerElement, bg);
-      });
-
-      // Add new background classes
-      this.renderer.addClass(mainContainerElement, 'specs-bg');
-      this.renderer.addClass(mainContainerElement, randomBackground);
+    // Set appropriate background
+    if (url === '/' || url === '/home') {
+      this.isHomePage = true;
+      this.renderer.addClass(mainContainer, 'home-bg');
+    } else if (url === '/specs') {
+      this.isHomePage = false;
+      const randomBg =
+        this.backgrounds[Math.floor(Math.random() * this.backgrounds.length)];
+      this.renderer.addClass(mainContainer, 'specs-bg');
+      this.renderer.addClass(mainContainer, randomBg);
     }
   }
 
   ngOnDestroy() {
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
     if (isPlatformBrowser(this.platformId)) {
       this.particleService.destroy();
-      if (this.routerSubscription) {
-        this.routerSubscription.unsubscribe();
-      }
     }
   }
 }
