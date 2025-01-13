@@ -8,12 +8,12 @@ import {
 } from '@angular/core';
 import {CommonModule, isPlatformBrowser} from '@angular/common';
 import {RouterModule} from '@angular/router';
-import {NavbarComponent} from '../../components/navbar/navbar.component';
+// import {NavbarComponent} from '../../components/navbar/navbar.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, NavbarComponent],
+  imports: [CommonModule, RouterModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
