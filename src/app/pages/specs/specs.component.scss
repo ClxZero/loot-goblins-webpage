@@ -39,7 +39,8 @@
     background: transparent;
     color: $text-color;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       background: $hover-color;
     }
   }
@@ -57,11 +58,17 @@
     color: $text-color; // Ensure text color contrasts with the background
 
     option {
-      background-color: rgba(0, 0, 0, 0.9); // Even darker background for options
+      background-color: rgba(
+        0,
+        0,
+        0,
+        0.9
+      ); // Even darker background for options
       color: $text-color; // Use the text color from variables
     }
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       background-color: rgba(0, 0, 0, 0.8); // Slightly lighter on hover/focus
     }
 
@@ -178,7 +185,7 @@
   position: relative;
   display: inline-block;
   width: 100%; // Make it full width for centering
-  
+
   &::before,
   &::after {
     content: attr(data-text);
@@ -216,10 +223,12 @@
   0% {
     clip: rect(0, 0, 0, 0);
   }
-  1%, 2% {
+  1%,
+  2% {
     clip: rect(24px, 550px, 90px, 0);
   }
-  3%, 100% {
+  3%,
+  100% {
     clip: rect(0, 0, 0, 0);
   }
 }
@@ -228,10 +237,12 @@
   0% {
     clip: rect(0, 0, 0, 0);
   }
-  1%, 2% {
+  1%,
+  2% {
     clip: rect(85px, 550px, 140px, 0);
   }
-  3%, 100% {
+  3%,
+  100% {
     clip: rect(0, 0, 0, 0);
   }
 }

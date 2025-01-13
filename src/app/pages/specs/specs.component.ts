@@ -11,7 +11,6 @@ import {
 import {CommonModule, isPlatformBrowser} from '@angular/common';
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {FormsModule} from '@angular/forms';
-import {parse} from 'papaparse';
 import {
   ColumnConfig,
   Player,
@@ -25,6 +24,7 @@ import {debounceTime, distinctUntilChanged, filter} from 'rxjs/operators';
 import {DynamicTableComponent} from './dynamic-table/dynamic-table.component';
 import {NavbarComponent} from '../../components/navbar/navbar.component';
 import {Router, NavigationEnd} from '@angular/router';
+import {CsvParserService} from '../../services/csv-parser.service';
 
 export type TableConfig =
   | 'assignedSpecializations'
@@ -98,7 +98,8 @@ export class SpecsComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private renderer: Renderer2,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private router: Router
+    private router: Router,
+    private csvParser: CsvParserService
   ) {
     this.searchSubject
       .pipe(debounceTime(200), distinctUntilChanged())
@@ -152,30 +153,19 @@ export class SpecsComponent implements OnInit, OnDestroy {
   getCSV(url: string, index: number) {
     return this.http.get(url, {responseType: 'text'}).pipe(
       map((csvText: string) => {
-        return new Promise(resolve => {
-          parse(csvText, {
-            header: true,
-            complete: results => {
-              // Type assertion based on the index
-              switch (index) {
-                case 0:
-                  resolve(results.data as PlayerSpec[]);
-                  break;
-                case 1:
-                  resolve(results.data as SpecializationsDetails[]);
-                  break;
-                case 2:
-                  resolve(results.data as Player[]);
-                  break;
-                case 3:
-                  resolve(results.data as User[]);
-                  break;
-                default:
-                  resolve(results.data);
-              }
-            },
-          });
-        });
+        const parsedData = this.csvParser.parse(csvText);
+        switch (index) {
+          case 0:
+            return parsedData as PlayerSpec[];
+          case 1:
+            return parsedData as SpecializationsDetails[];
+          case 2:
+            return parsedData as Player[];
+          case 3:
+            return parsedData as User[];
+          default:
+            return parsedData;
+        }
       })
     );
   }
