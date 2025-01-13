@@ -102,11 +102,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.routerSubscription) {
-      this.routerSubscription.unsubscribe();
-    }
     if (isPlatformBrowser(this.platformId)) {
       this.particleService.destroy();
+      if (this.routerSubscription) {
+        this.routerSubscription.unsubscribe();
+      }
     }
   }
 }

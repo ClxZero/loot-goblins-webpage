@@ -4,7 +4,6 @@ import {
   Inject,
   PLATFORM_ID,
   HostListener,
-  OnDestroy,
   Renderer2,
 } from '@angular/core';
 import {CommonModule, isPlatformBrowser} from '@angular/common';
@@ -18,7 +17,7 @@ import {NavbarComponent} from '../../components/navbar/navbar.component';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent implements AfterViewInit, OnDestroy {
+export class HomeComponent implements AfterViewInit {
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private renderer: Renderer2
@@ -38,15 +37,6 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       'background',
       'url("../assets/imgs/fondo-completo.webp") no-repeat center top'
     );
-  }
-
-  ngOnDestroy() {
-    if (isPlatformBrowser(this.platformId)) {
-      const mainContainerElement = document.querySelector('.main-container');
-      if (mainContainerElement) {
-        this.renderer.removeClass(mainContainerElement, 'home-bg');
-      }
-    }
   }
 
   @HostListener('window:scroll', ['$event'])
