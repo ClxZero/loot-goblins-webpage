@@ -22,7 +22,7 @@ import {
 import {forkJoin, map, Subscription, Subject} from 'rxjs';
 import {debounceTime, distinctUntilChanged, filter} from 'rxjs/operators';
 import {DynamicTableComponent} from './dynamic-table/dynamic-table.component';
-// import {NavbarComponent} from '../../components/navbar/navbar.component';
+import {NavbarComponent} from '../../components/navbar/navbar.component';
 import {Router, NavigationEnd} from '@angular/router';
 import {CsvParserService} from '../../services/csv-parser.service';
 
@@ -37,7 +37,7 @@ export type TableConfig =
 @Component({
   selector: 'specializations',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, FormsModule],
+  imports: [CommonModule, HttpClientModule, FormsModule, NavbarComponent],
   templateUrl: './specs.component.html',
   styleUrl: './specs.component.scss',
 })
